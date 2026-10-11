@@ -1,0 +1,8 @@
+---
+title: "p8105_hw3_ADV2123"
+author: "Andrea Vasquez"
+date: "2026-10-11"
+output: 
+  github_document:
+    toc: true
+---
