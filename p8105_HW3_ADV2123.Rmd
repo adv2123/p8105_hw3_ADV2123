@@ -77,6 +77,8 @@ The most commonly observed values for snowfall is 0 (2,008,508), followed by NA,
 ### 1.3 Two-panel plot
 
 ```{r}
+
+mean_tmax_vs_year_plot =
 ny_noaa_df |>
   filter(month %in% c("January", "July")) |>
   group_by(id, year, month) |>
