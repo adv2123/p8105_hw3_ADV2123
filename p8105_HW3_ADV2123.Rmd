@@ -74,13 +74,14 @@ ny_noaa_df |>
 
 The most commonly observed values for snowfall is 0 (2,008,508), followed by NA, 25, 13, 51,  and 76. This indicates that, overall, it does not snow on most days. 
 
-### 1.3 Two-panel plot
+### 1.3 Two-panel plot: Mean Tmax vs. year 
 
 ```{r}
 
 mean_tmax_vs_year_plot =
 ny_noaa_df |>
   filter(month %in% c("January", "July")) |>
+  drop_na(tmax) |>
   group_by(id, year, month) |>
   summarize(mean_tmax = mean(tmax, na.rm = TRUE)) |>
   ggplot(aes(x = year, y = mean_tmax, group = id)) +
@@ -92,10 +93,50 @@ ny_noaa_df |>
     x = "Year",
     y = "Mean daily max temperature (°C)"
   )
+
+mean_tmax_vs_year_plot
 ```
 
 Average maximum temperatures are much higher in July (station means mostly between 20 and 33 °C) than in January (mostly between -10 and 10 °C). January is also more variable, both across stations within a year and from year to year. Within each month, stations tend to move together, meaning that in a cold year, such as January 1994 or 2004, nearly all stations are colder than usual, which suggests statewide weather patterns rather than station-specific effects. There is no clear long-term trend in either month over the 30 years.
 
 There are several outliers. In January, individual stations were noticeably colder than the rest of the state in 1982 (-13 °C), 1993, and 2005, while in 2004 a few stations were much warmer than the rest (7 to 10 °C when most were below 0 °C). In July, the outliers are mostly on the cold side: one station averaged 14 °C in 1988, and another averaged 19 °C in 1984, when the other stations ranged up to about 29 °C.
 
+### 1.4a Two-panel plot: tmax vs tmin 
+
+```{r}
+
+tmax_tmin_plot =
+  ny_noaa_df |>
+  drop_na(tmin, tmax) |>
+  ggplot(aes(x = tmin, y = tmax)) +
+  geom_hex() +
+  labs(
+    title = "Max vs min temperature",
+    x = "Minimum daily temperature (°C)",
+    y = "Maximum daily temperature (°C)",
+    fill = "Number of days"
+  ) +
+  theme(legend.key.width = unit(1.5, "cm"))
+
+tmax_tmin_plot 
+```
+
+### 1.4b Two-panel plot: Snowfall per year
+
+```{r}
+
+snow_plot =
+  ny_noaa_df |>
+  filter(snow > 0, snow < 100) |>
+  mutate(year = factor(year)) |>
+  ggplot(aes(x = snow, y = year)) +
+  ggridges::geom_density_ridges(scale = .85) +
+  labs(
+    title = "Snowfall between 0 and 100 mm, by year",
+    x = "Snowfall (mm)",
+    y = "Year"
+  )
+
+snow_plot
+```
 
