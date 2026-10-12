@@ -7,7 +7,7 @@ output:
     toc: true
 ---
 
-```{r}
+```{r message=FALSE}
 
 library(tidyverse)
 library(patchwork)
@@ -63,7 +63,7 @@ ny_noaa_df
 
 The cleaned data now has the corresponding variables for year, month, and day, as well as the correct units for precipitation and temperature (tenths of mm and degress of C, respectively). I reorganized
 
-######## 1.2a Most commonly observed values of snowfall
+###### 1.2a Most commonly observed values of snowfall
 
 ```{r}
 ny_noaa_df |>
@@ -74,7 +74,7 @@ ny_noaa_df |>
 
 The most commonly observed values for snowfall is 0 (2,008,508), followed by NA, 25, 13, 51,  and 76. This indicates that, overall, it does not snow on most days. 
 
-### 1.3 Two-panel plot: Mean Tmax vs. year 
+### 1.3 Two-panel plot: Mean tmax per year 
 
 ```{r}
 
@@ -83,7 +83,7 @@ ny_noaa_df |>
   filter(month %in% c("January", "July")) |>
   drop_na(tmax) |>
   group_by(id, year, month) |>
-  summarize(mean_tmax = mean(tmax, na.rm = TRUE)) |>
+  summarise(mean_tmax = mean(tmax, na.rm = TRUE), .groups = "drop_last") |>
   ggplot(aes(x = year, y = mean_tmax, group = id)) +
   theme_bw() +
   geom_point( alpha = 0.3) +
@@ -121,6 +121,9 @@ tmax_tmin_plot =
 tmax_tmin_plot 
 ```
 
+The plot shows hexagons, each of which represents the number of station-days with that combination of minimum and maximum temperature, with lighter colors indicating more days. The plot shows a positive association between the two, meaning that days with higher minimum temperatures also tend to have higher maximum temperatures, forming an ascending diagonal band. Observations are concentrated in two areas, one around a minimum of 12–15 °C and a maximum of 24–27 °C (typical summer days), and one around a minimum of -3 °C and a maximum of 3 °C (typical winter days). There are a few suspicious values, likely resulting from recording error. For example, some days have maximum and minimum temperatures of 60 °C, and some have a minimum temperature higher than the maximum. 
+
+
 ### 1.4b Two-panel plot: Snowfall per year
 
 ```{r}
@@ -131,6 +134,7 @@ snow_plot =
   mutate(year = factor(year)) |>
   ggplot(aes(x = snow, y = year)) +
   ggridges::geom_density_ridges(scale = .85) +
+  scale_x_continuous(breaks = c(0, 13, 25, 51, 76, 100)) +
   labs(
     title = "Snowfall between 0 and 100 mm, by year",
     x = "Snowfall (mm)",
@@ -140,3 +144,4 @@ snow_plot =
 snow_plot
 ```
 
+The plot shows the distribution of snowfall values between 0 and 100 mm for each year, with year treated as a categorical variable and the density curves stacked on top of each other from 1981 to 2010. The distributions look very similar from year to year. Rather than being smooth, each ridge has distinct peaks, the largest at around 13 and 25 mm, with smaller peaks at around 51 and 76 mm. 
