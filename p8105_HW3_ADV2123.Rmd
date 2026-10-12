@@ -81,10 +81,10 @@ ny_noaa_df |>
   filter(month %in% c("January", "July")) |>
   drop_na(tmax) |>
   group_by(id, year, month) |>
-  summarise(mean_tmax = mean(tmax, na.rm = TRUE), .groups = "drop_last") |>
-  ggplot(aes(x = year, y = mean_tmax, group = id)) +
-  theme_bw() +
-  geom_point( alpha = 0.3) +
+  summarise(mean_tmax = mean(tmax), .groups = "drop") |>
+  ggplot(aes(x = year, y = mean_tmax)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth(se = FALSE) +
   facet_grid(. ~ month) +
   labs(
     title = "Average max temperature by station, January vs July",
@@ -208,3 +208,6 @@ Age_by_Edu_sex_plot
 ```
 
 The age distributions show that participants with more than a high school education tend to be younger, with median ages in the low 40s for both men and women, compared with a median of around 60 for those with less than a high school education. Within the “Less than high school” and “More than high school” categories, the age distributions of men and women are similar. The “High school equivalent” category is the exception: women in this group are older than men, with a median age of about 62 compared with 53, and their middle 50% of ages is shifted upward (skewed to the right).
+
+
+
