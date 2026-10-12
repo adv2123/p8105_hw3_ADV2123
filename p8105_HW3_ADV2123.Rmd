@@ -146,7 +146,7 @@ The plot shows the distribution of snowfall values between 0 and 100 mm for each
 
 # PROBLEM 2:
 
-### Data import + cleaning
+### 2.1 Data import + cleaning
 
 ```{r}
 demo_df =
@@ -178,7 +178,7 @@ nhanes_df =
   inner_join(demo_df, accel_df, by = "seqn")
 ```
 
-##### Table of # men and women per educational category
+##### 2.1a Table of # men and women per educational category
 ```{r}
 demo_df |>
   count(education, sex) |>
@@ -189,7 +189,7 @@ demo_df |>
 
 The numbers of men and women are similar in the “Less than high school” and “More than high school” categories, but there are more men than women in the “High school equivalent” category (35 vs. 23).
 
-##### Age Distribution by Education and Sex plot
+##### 2.1b Age Distribution by Education and Sex plot
 
 ```{r}
 
@@ -208,6 +208,39 @@ Age_by_Edu_sex_plot
 ```
 
 The age distributions show that participants with more than a high school education tend to be younger, with median ages in the low 40s for both men and women, compared with a median of around 60 for those with less than a high school education. Within the “Less than high school” and “More than high school” categories, the age distributions of men and women are similar. The “High school equivalent” category is the exception: women in this group are older than men, with a median age of about 62 compared with 53, and their middle 50% of ages is shifted upward (skewed to the right).
+
+
+### 2.2 Total activity by age, sex, and education. 
+
+```{r}
+total_activity_df =
+  nhanes_df |>
+  group_by(seqn, sex, age, bmi, education) |>
+  summarize(total_mims = sum(mims), .groups = "drop")
+
+total_activity_plot =
+  total_activity_df |>
+  ggplot(aes(x = age, y = total_mims, color = sex)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(se = FALSE) +
+  facet_grid(. ~ education) +
+  labs(
+    title = "Total daily activity by age, sex, and education",
+    x = "Age (years)",
+    y = "Total activity (MIMS)",
+    color = "Sex"
+  )
+
+total_activity_plot
+```
+
+Total daily activity generally declines with age in all three education groups, particularly after about age 60. The decline is steepest among participants with less than a high school education, falling from roughly 17,000–18,000 MIMS in the 20s to about 9,000 MIMS at age 80. In this group, men and women follow similar trends, with women slightly more active at younger ages and men slightly more active between about 50 and 70.
+
+In the “High school equivalent” group, activity rises to a peak around age 40 before declining, and the peak is much more pronounced among women (about 17,000 MIMS) than men (about 14,000 MIMS). In the “More than high school” group, activity is fairly stable until about age 60 and then declines. In both of these groups, women are more active than men at most ages.
+
+It is important to note that each panel contains relatively few participants, so few observations, specially outliers, can significantly influence the direction of the curve. Also, one man in the “More than high school” group has total activity near zero, which may reflect a device that was not worn.
+
+In sum, overall activity levels are broadly similar across the three education groups, and the plot does not show a clear, consistent pattern of higher or lower activity with increasing education. However, the groups differ somewhat in how activity changes with age, and given the small number of participants in each panel, this plot alone cannot establish whether education is related to physical activity.
 
 
 
