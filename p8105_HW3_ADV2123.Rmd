@@ -352,5 +352,25 @@ Median ride duration was longer in 2020 than in 2024 for every day and both mont
 Within each month, median duration was fairly stable from Monday to Friday and increased on weekends. The weekend increase was largest in July 2020, rising from about 13–14 minutes on weekdays to about 16 minutes on Saturday and Sunday. In January 2024, however, there was little weekend effect. Saturday was only slightly longer than weekdays, and Sunday had one of the shortest median durations of the week. This comes as a surprise to me because the winter of 2024 was far more warmer than that of 2020, so my guess is that the larger median ride duration observed in the winter of 2020 was likely due to an increased leisure time during COVID-19.
 
 
+### Problem 3.5: 2024 ride duration by month, rider type, and bike type
 
+```{r}
+duration_2024_plot =
+  citi_df |>
+  filter(year == "2024") |>
+  ggplot(aes(x = duration, fill = member_casual)) +
+  geom_density(alpha = 0.5) +
+  facet_grid(rideable_type ~ month) +
+  scale_x_continuous(trans = "log10") +
+  labs(
+    title = "Distribution of ride duration in 2024",
+    x = "Ride duration (minutes, log scale)",
+    y = "Density",
+    fill = "Rider type"
+  )
 
+duration_2024_plot
+
+```
+
+This figure shows the distribution of 2024 ride durations by rider type, bike type, and month, on a log scale because durations are strongly right-skewed. Casual riders take longer rides than members in every panel, while member rides consistently peak at around 7–10 minutes. The gap is largest for classic bikes in July, when casual rides peak at around 20 minutes, and smallest for electric bikes, where the two groups’ distributions nearly overlap, especially in January. Rides are generally longer in July than in January, most noticeably among casual riders on classic bikes, likely reflecting more leisure riding in warm weather.
