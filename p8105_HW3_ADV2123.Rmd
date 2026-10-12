@@ -305,5 +305,27 @@ citi_df =
 The cleaned dataset contains `r nrow(citi_df)` rides and `r ncol(citi_df)` variables, covering January and July of 2020 and 2024. Each row is one ride, with its ID, year, month, day of the week, bike type (`rideable_type`), duration in minutes, starting and ending station names, and rider type (`member_casual`).
 
 
+### 3.2 Rider count per year, months, and member type.
+
+```{r}
+citi_df |>
+  count(year, month, member_casual) |>
+  pivot_wider(names_from = member_casual, values_from = n) |>
+  knitr::kable(col.names = c("Year", "Month", "Members", "Casual riders"))
+```
+
+Across all four months, members took more rides than casual riders. Ride counts were much higher in July than in January in both years, which likely reflects seasonal weather. Ridership also grew substantially between 2020 and 2024. In July, for example, rides among members increased from 11436 in 2020 to 36262 in 2024. Because the data are a 1% sample of rides, these counts show relative differences in usage rather than total ridership. 
+
+### 3.3. Top 5 starting stations, July 2024
+
+```{r}
+citi_df |>
+  filter(year == "2024", month == "July") |>
+  count(start_station_name, sort = TRUE) |>
+  slice_head(n = 5) |>
+  knitr::kable(col.names = c("Starting station", "Number of rides"))
+```
+
+
 
 
