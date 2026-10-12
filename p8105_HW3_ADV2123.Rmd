@@ -270,3 +270,40 @@ This plot shows mean activity over the 24-hour day for men and women within each
 The shape of the daytime period differs somewhat by education. Among participants with less than a high school education, activity peaks in late morning (around 11 am to noon) and then declines gradually through the afternoon. In the other two groups, activity stays on a relatively flat plateau from about 9 am until the evening.
 
 Differences between men and women also vary by education level. In the “High school equivalent” and “More than high school” groups, women are more active than men during the day, and the gap is largest in the “More than high school” group. Women in these groups also become active slightly earlier in the morning. In the “Less than high school” group, men and women have very similar daytime activity, while men are somewhat more active overnight.
+
+# PROBLEM 3
+
+### 3.1 Data import and cleaning
+
+
+```{r message=FALSE}
+jan_2020_df = read_csv("data/Jan 2020 Citi.csv") |> 
+  mutate(year = 2020, month = "January")
+jul_2020_df = read_csv("data/July 2020 Citi.csv") |>
+  mutate(year = 2020, month = "July")
+jan_2024_df = read_csv("data/Jan 2024 Citi.csv") |> 
+  mutate(year = 2024, month = "January")
+jul_2024_df = read_csv("data/July 2024 Citi.csv") |>
+  mutate(year = 2024, month = "July")
+
+citi_df =
+  bind_rows(jan_2020_df, jul_2020_df, jan_2024_df, jul_2024_df) |>
+  janitor::clean_names() |>
+  mutate(
+    year = factor(year),
+    month = factor(month, levels = c("January", "July")),
+    weekdays = factor(
+      weekdays,
+      levels = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+    ),
+    member_casual = factor(member_casual, levels = c("member", "casual"), labels = c("Member", "Casual")),
+    rideable_type = factor(rideable_type, levels = c("classic_bike", "electric_bike"), labels = c("Classic", "Electric"))
+  ) |>
+  select(ride_id, year, month, weekdays, everything())
+```
+
+The cleaned dataset contains `r nrow(citi_df)` rides and `r ncol(citi_df)` variables, covering January and July of 2020 and 2024. Each row is one ride, with its ID, year, month, day of the week, bike type (`rideable_type`), duration in minutes, starting and ending station names, and rider type (`member_casual`).
+
+
+
+
