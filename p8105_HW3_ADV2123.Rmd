@@ -145,3 +145,38 @@ snow_plot
 ```
 
 The plot shows the distribution of snowfall values between 0 and 100 mm for each year, with year treated as a categorical variable and the density curves stacked on top of each other from 1981 to 2010. The distributions look very similar from year to year. Rather than being smooth, each ridge has distinct peaks, the largest at around 13 and 25 mm, with smaller peaks at around 51 and 76 mm. 
+
+# PROBLEM 2:
+
+### Data import + cleaning
+
+```{r}
+demo_df =
+  read_csv("data/nhanes_covar.csv", skip = 4, na = c("NA", ".", "")) |>
+  janitor::clean_names() |>
+  filter(age >= 21) |>
+  drop_na() |>
+  mutate(
+    sex = factor(sex, levels = c(1, 2), labels = c("Male", "Female")),
+    education = factor(
+      education,
+      levels = c(1, 2, 3),
+      labels = c("Less than high school", "High school equivalent", "More than high school")
+    )
+  )
+
+accel_df =
+  read_csv("data/nhanes_accel.csv") |>
+  janitor::clean_names() |>
+  pivot_longer(
+    min1:min1440,
+    names_to = "minute",
+    names_prefix = "min",
+    names_transform = as.numeric,
+    values_to = "mims"
+  )
+
+nhanes_df =
+  inner_join(demo_df, accel_df, by = "seqn")
+```
+
